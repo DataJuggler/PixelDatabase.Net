@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Data Juggler - datajuggler.com</authors>
+    <owners>Data Juggler</owners>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/DataJuggler/PixelDatabase.Net</projectUrl>
+    <iconUrl>https://github.com/DataJuggler/PixelDatabase/blob/master/Eraser.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Pixel Database converts a Bitmap to a PixelInfomration object, that lets use LINQ or BQL (Bitmap Query Language)</description>
+    <releaseNotes>I am creating a .Net Framework version, because .Net Standard 2.1 doesn't work .Net Framework.</releaseNotes>
+    <copyright>Copyright 2020</copyright>
+    <tags>C#,Bitmap,Pixels,Jpegs,Pngs,Images,Imaging,Image Editing</tags>
+    <dependencies>
+      <dependency id="DataJuggler.Core.UltimateHelper" version="1.5" include="contentFiles, build" />
+    </dependencies>
+  </metadata>
+</package>
