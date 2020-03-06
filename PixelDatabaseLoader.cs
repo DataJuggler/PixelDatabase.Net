@@ -115,6 +115,9 @@ namespace DataJuggler.PixelDatabase.Net
                                 updateCallback("SetGraphMax", max);
                             }
 
+                            // Create a Guid
+                            Guid loadId = Guid.NewGuid();
+
                             // Iterating the pixel array, every 4th byte is a new pixel, much faster than GetPixel
                             for (int a = 0; a < pixels.Length; a = a + 4)
                             {
@@ -141,7 +144,7 @@ namespace DataJuggler.PixelDatabase.Net
                                 color = Color.FromArgb(alpha, red, green, blue);
 
                                 // Add this pixel
-                                PixelInformation pixelInformation = pixelDatabase.AddPixel(color, x, y);
+                                PixelInformation pixelInformation = pixelDatabase.AddPixel(color, x, y, loadId);
                             }
 
                             // Create a DirectBitmap

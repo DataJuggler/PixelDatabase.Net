@@ -26,6 +26,7 @@ namespace DataJuggler.PixelDatabase.Net
         private Color color;
         private int x;
         private int y;
+        private Guid updateId;
         #endregion
 
         #region Constructor
@@ -236,6 +237,17 @@ namespace DataJuggler.PixelDatabase.Net
                     // return value
                     return total;
                 }
+            }
+            #endregion
+            
+            #region UpdateId
+            /// <summary>
+            /// This property gets or sets the value for 'UpdateId'.
+            /// </summary>
+            public Guid UpdateId
+            {
+                get { return updateId; }
+                set { updateId = value; }
             }
             #endregion
             

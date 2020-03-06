@@ -132,7 +132,7 @@ namespace DataJuggler.PixelDatabase.Net
                         }
                     }
                     // if this is a draw line
-                    else if (actionType == ActionTypeEnum.DrawLine)
+                    else if ((actionType == ActionTypeEnum.DrawTransparentLine) || (actionType == ActionTypeEnum.DrawLine))
                     {
                         // if the existingCriteria 
                         if (NullHelper.IsNull(existingCriteria))
@@ -155,11 +155,11 @@ namespace DataJuggler.PixelDatabase.Net
                             // Get the words
                             List<Word> words = WordParser.GetWords(text, delimiterChars);
 
-                            // If the words collection exists and has one or more items
-                            if (ListHelper.HasOneOrMoreItems(words))
+                            // If the words collection exists and has three or more items
+                            if (ListHelper.HasXOrMoreItems(words, 3))
                             {
                                 // Get the lastWord
-                                Word lastWord = words[words.Count - 1];
+                                Word lastWord = words[2];
 
                                 // Set the thickness
                                 pixelCriteria.Thickness = NumericHelper.ParseInteger(lastWord.Text, -1000, -1001);
@@ -293,11 +293,11 @@ namespace DataJuggler.PixelDatabase.Net
             }
             #endregion
             
-            #region ParseActionType(string queryText)
+            #region ParseActionType(string queryText, ref PixelQuery pixelQuery)
             /// <summary>
             /// This method returns the Action Type
             /// </summary>
-            public static ActionTypeEnum ParseActionType(string queryText)
+            public static ActionTypeEnum ParseActionType(string queryText, ref PixelQuery pixelQuery)
             {
                 // initial value
                 ActionTypeEnum actionType = ActionTypeEnum.Unknown;
@@ -323,8 +323,49 @@ namespace DataJuggler.PixelDatabase.Net
                     }
                     else if (queryText.Contains("draw line"))
                     {
-                        // set the actionType to DrawLine
-                        actionType = ActionTypeEnum.DrawLine;
+                        // get the textLines
+                        List<TextLine> textLines = WordParser.GetTextLines(queryText);
+
+                        // If the textLines collection exists and has one or more items
+                        if (ListHelper.HasOneOrMoreItems(textLines))
+                        {
+                            // get the topLine
+                            TextLine topLine = textLines[0];
+
+                            // get the words
+                            List<Word> words = WordParser.GetWords(topLine.Text);
+
+                            if (words.Count == 3)
+                            {
+                                // set the actionType to DrawLine
+                                actionType = ActionTypeEnum.DrawTransparentLine;
+                            }
+                            if (words.Count == 4)
+                            {
+                                // Set the Color
+                                pixelQuery.Color = Color.FromName(words[3].Text);
+
+                                // set the actionType to DrawLine
+                                actionType = ActionTypeEnum.DrawLine;
+                            }
+                            if (words.Count == 6)
+                            {
+                                // get the red green blue values
+                                int red = NumericHelper.ParseInteger(words[3].Text, -1, -1);
+                                int green = NumericHelper.ParseInteger(words[4].Text, -1, -1);
+                                int blue = NumericHelper.ParseInteger(words[5].Text, -1, -1);
+
+                                // if in range
+                                if ((red > 0) && (red <= 255) && (green > 0) && (green <= 255) && (blue > 0) && (blue <= 255))
+                                {
+                                    // Set the color
+                                    pixelQuery.Color = Color.FromArgb(red, green, blue);
+                                }
+
+                                // set the actionType to DrawLine
+                                actionType = ActionTypeEnum.DrawLine;
+                            }
+                        }
                     }
                     else if (queryText.Contains("set backcolor"))
                     {
@@ -382,7 +423,7 @@ namespace DataJuggler.PixelDatabase.Net
                             if (TextHelper.Exists(text))
                             {  
                                 // if this is DrawLine
-                                if (actionType == ActionTypeEnum.DrawLine)
+                                if ((actionType == ActionTypeEnum.DrawTransparentLine) || (actionType == ActionTypeEnum.DrawLine))
                                 {
                                     // if this is the first line
                                     if (count == 1)
@@ -643,7 +684,7 @@ namespace DataJuggler.PixelDatabase.Net
                     List<TextLine> lines = WordParser.GetTextLines(queryText);
 
                     // parse the ActionType (Show Pixels, Hide Pixels, Draw Line, Update)
-                    pixelQuery.ActionType = ParseActionType(queryText);
+                    pixelQuery.ActionType = ParseActionType(queryText, ref pixelQuery);
 
                     // if we are doing an update query, we have to modify this a little
                     if (pixelQuery.ActionType == ActionTypeEnum.Update)

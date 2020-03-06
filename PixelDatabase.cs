@@ -320,11 +320,11 @@ namespace DataJuggler.PixelDatabase.Net
             }
             #endregion
 
-            #region AddPixel(Color color, int x, int y)
+            #region AddPixel(Color color, int x, int y, Guid updateId)
             /// <summary>
             /// method returns the Pixel
             /// </summary>
-            public PixelInformation AddPixel(Color color, int x, int y)
+            public PixelInformation AddPixel(Color color, int x, int y, Guid updateId)
             {  
                 // Create a pixe
                 PixelInformation pixel = new PixelInformation();
@@ -338,6 +338,9 @@ namespace DataJuggler.PixelDatabase.Net
 
                 /// The Index is set before the count increments when this item is added
                 pixel.Index = this.Pixels.Count;
+
+                // Set the UpdateId so new pixels can always be determined
+                pixel.UpdateId = updateId;
 
                 // Add this pixel
                 this.Pixels.Add(pixel);
@@ -380,7 +383,7 @@ namespace DataJuggler.PixelDatabase.Net
             /// This method parses and applies the queryText passed in.
             /// </summary>
             /// <param name="queryText"></param>
-            public void ApplyQuery(string queryText, StatusUpdate status)
+            public PixelQuery ApplyQuery(string queryText, StatusUpdate status)
             {
                 // locals
                 int alpha = 0;
@@ -390,12 +393,13 @@ namespace DataJuggler.PixelDatabase.Net
                 Guid historyId = Guid.NewGuid();
                 Color color;
                 bool checkForMask = false;
+                PixelQuery pixelQuery = null;
 
                 // if the queryText exists
                 if (TextHelper.Exists(queryText))
                 {  
-                    // Parse the PixelQuery
-                   PixelQuery pixelQuery = PixelQueryParser.ParsePixelQuery(queryText);
+                   // Parse the PixelQuery
+                   pixelQuery = PixelQueryParser.ParsePixelQuery(queryText);
 
                     // if this is a valid query
                     if (pixelQuery.IsValid)
@@ -477,31 +481,15 @@ namespace DataJuggler.PixelDatabase.Net
                             }
                             else
                             {
-                                
+                                // show a message  
                                 status("No pixels could be found matching your search criteria", 0);
                             }
                         }
                         // if we are drawing
-                        else if (pixelQuery.ActionType >= ActionTypeEnum.DrawLine)
+                        else if ((pixelQuery.ActionType >= ActionTypeEnum.DrawTransparentLine) || (pixelQuery.ActionType == ActionTypeEnum.DrawLine))
                         {
-                            // if there are one or more criteria items
-                            if (ListHelper.HasOneOrMoreItems(pixelQuery.Criteria))
-                            {
-                                // get the first criteria
-                                PixelCriteria criteria = pixelQuery.Criteria[0];
-
-                                // if we are drawing a single line
-                                if (criteria.RepeatType == RepeatTypeEnum.NoRepeat)
-                                {
-                                    // Draw the line
-                                    DrawLine(criteria, alpha, this.DirectBitmap.Bitmap, historyId, status);
-                                }
-                                else
-                                {
-                                    // Draw repeating lines
-                                    DrawRepeatingLines(criteria, alpha, this.DirectBitmap.Bitmap, historyId, status);
-                                }
-                            }
+                            // Handle drawing a line
+                            HandleDrawLine(pixelQuery, historyId, status);
                         }
                         else
                         {
@@ -533,6 +521,9 @@ namespace DataJuggler.PixelDatabase.Net
                         }
                     }
                 }
+
+                // return value
+                return pixelQuery;
             }
             #endregion
 
@@ -606,6 +597,9 @@ namespace DataJuggler.PixelDatabase.Net
 
                     // Set the pixel
                     this.DirectBitmap.SetPixel(pixel.X, pixel.Y, color, historyId, previousColor);
+
+                    // Update the Database
+                    previousColor = color;
                 }
 
                 // Update the pixels affected by the query
@@ -616,15 +610,24 @@ namespace DataJuggler.PixelDatabase.Net
             }
             #endregion
 
-            #region DrawLine(PixelCriteria pixelCriteria, int alpha, Bitmap bitmap, Guid historyId, StatusUpdate status, bool replaceColors = true)
+            #region DrawLine(PixelCriteria pixelCriteria, int alpha, Bitmap bitmap, Guid historyId, StatusUpdate status, Graphics graphics, bool replaceColors = true, Color? colorToUse = null)
             /// <summary>
             /// This method Draws a Line based upon the pixelCriteria
             /// </summary>
-            public void DrawLine(PixelCriteria pixelCriteria, int alpha, Bitmap bitmap, Guid historyId, StatusUpdate status, bool replaceColors = true)
+            public void DrawLine(PixelCriteria pixelCriteria, int alpha, Bitmap bitmap, Guid historyId, StatusUpdate status, Graphics graphics, bool replaceColors = true, Color? colorToUse = null)
             {
+                // locals
+                bool useColor = false;
+                Color color = Color.Empty;
+
+                // This now draws lines in color, or lines in a line color not in your image and then replaces that color.
+
                 // This is a little cumberson, but what this is doing is drawing a line with a replacement color 
                 // (a color not in the source image). Next the pixels that match the replacement color are 
                 // replaced with a transparent pixel. This has to be done since Pen object does not support full opacity.
+
+                // Create a pen
+                Pen pen;
 
                 // if the LineColor has not been set
                 if (!this.LineColorSet)
@@ -633,15 +636,28 @@ namespace DataJuggler.PixelDatabase.Net
                     this.LineColor = SetLineColor();
                 }
 
-                // Create a pen
-                Pen pen = new Pen(LineColor, pixelCriteria.Thickness);
+                // create the pen to use the LineColor
+                pen =  new Pen(LineColor, pixelCriteria.Thickness);
 
-                // Create a graphics object
-                Graphics graphics = Graphics.FromImage(bitmap);
+                // if null
+                if (NullHelper.Exists(colorToUse))
+                {
+                    // we are using the color here
+                    useColor = true;
 
-                // Draw a line
+                    // local
+                    color = (Color) colorToUse;
+
+                    // color
+                    pen = new Pen(color, pixelCriteria.Thickness);
+
+                    // no need
+                    replaceColors = false;
+                }
+                
+                // Draw the line in LineColor
                 graphics.DrawLine(pen, pixelCriteria.StartPoint, pixelCriteria.EndPoint);
-
+                
                 // if replaceColors is true
                 if (replaceColors)
                 {
@@ -649,32 +665,76 @@ namespace DataJuggler.PixelDatabase.Net
                     PixelDatabase pixelDatabase = PixelDatabaseLoader.LoadPixelDatabase(bitmap, null);
 
                     // Now get the pixels that are equal to the lineColor
-                    List<PixelInformation> pixels = pixelDatabase.Pixels.Where(x => x.Color == LineColor).ToList();
+                    List<PixelInformation> pixels = null;
+                    
+                    // Get the pixels in the LineColor (it is supposed to be unique)
+                    pixels = pixelDatabase.Pixels.Where(x => x.Color == LineColor).ToList();
 
                     // if one or more pixels were founds
                     if (ListHelper.HasOneOrMoreItems(pixels))
                     {
+                        // local
+                        int count = 0;
+
                         // iterate the pixels
                         foreach (PixelInformation pixel in pixels)
                         {
+                            // get the count
+                            count++;
+
+                            // If the status object exists
+                            if (NullHelper.Exists(status))
+                            {
+                                // update every 1,000
+                                if (count % 1000 == 0)
+                                {
+                                    // set a message
+                                    string message = "Draw Line has completed  " + String.Format("{0:n0}", count) + " of " + String.Format("{0:n0}", pixels.Count) + ".";
+
+                                    // send updated message
+                                    status(message, pixels.Count);
+                                }
+                            }
+
                             // attempt to find the source pixel
                             PixelInformation source = this.Pixels.FirstOrDefault(x => x.X == pixel.X && x.Y == pixel.Y);
 
                             // if the source pixel exists
                             if (NullHelper.Exists(source))
                             {
-                                // Create a transparent color
-                                Color transparent = Color.FromArgb(alpha, source.Color);
+                                // if we are not using a color, then we need a transparent color
+                                if (!useColor)
+                                {
+                                    // Create a transparent color
+                                    color = Color.FromArgb(alpha, source.Color);
+                                }
 
                                 // Set the pixels
-                                pixel.Color = transparent;
+                                pixel.Color = color;
+                                pixel.UpdateId = historyId;
 
                                 // Set the color
-                                this.DirectBitmap.SetPixel(pixel.X, pixel.Y, transparent, historyId, source.Color);
+                                this.DirectBitmap.SetPixel(pixel.X, pixel.Y, color, historyId, source.Color);
 
                                 // Update the color of the source
-                                source.Color = transparent;
+                                source.Color = color;
+
+                                // Set the lastUpdateId
+                                source.UpdateId = historyId;
                             }
+                        }
+
+                        // Set the last pixels updated
+                        LastUpdate = pixels;
+
+                        // if the status exists
+                        if (NullHelper.Exists(status))
+                        {
+                            // set a message
+                            string message = "Draw Line completed with " + String.Format("{0:n0}", pixels.Count) + " updated.";
+
+                            // send updated message
+                            status(message, pixels.Count);
                         }
                     }
                 }
@@ -727,14 +787,14 @@ namespace DataJuggler.PixelDatabase.Net
             }
             #endregion
             
-            #region DrawRepeatingLines(PixelCriteria pixelCriteria, int alpha, Bitmap bitmap, Guid historyId, StatusUpdate status)
+            #region DrawRepeatingLines(PixelCriteria pixelCriteria, int alpha, Bitmap bitmap, Guid historyId, StatusUpdate status, Graphics graphics, Color? colorToUse = null)
             /// <summary>, 
             /// This method Draw Repeating Lines
             /// </summary>
-            public void DrawRepeatingLines(PixelCriteria pixelCriteria, int alpha, Bitmap bitmap, Guid historyId, StatusUpdate status)
+            public void DrawRepeatingLines(PixelCriteria pixelCriteria, int alpha, Bitmap bitmap, Guid historyId, StatusUpdate status, Graphics graphics, Color? colorToUse = null)
             {
-                // verify both objects exist                
-                if (NullHelper.Exists(pixelCriteria, bitmap))
+                // verify all objects exist                
+                if (NullHelper.Exists(pixelCriteria, bitmap, graphics))
                 {
                     // iterate the Reps
                     for (int x = 0; x < pixelCriteria.Repititions; x++)
@@ -750,12 +810,12 @@ namespace DataJuggler.PixelDatabase.Net
                         if (x == (pixelCriteria.Repititions - 1))
                         {
                             // Draw the line and replace the LineColor with a transparency. This only has to be done once.
-                            DrawLine(pixelCriteria, alpha, bitmap, historyId, status, true);
+                            DrawLine(pixelCriteria, alpha, bitmap, historyId, status, graphics, true, colorToUse);
                         }
                         else
                         {
                             // Draw the line, but do not replace the colors
-                            DrawLine(pixelCriteria, alpha, bitmap, historyId, status, false);
+                            DrawLine(pixelCriteria, alpha, bitmap, historyId, status, graphics, false, colorToUse);
                         }
                     }
                 }
@@ -962,6 +1022,64 @@ namespace DataJuggler.PixelDatabase.Net
             }
             #endregion
 
+            #region HandleDrawLine(PixelQuery pixelQuery,  Guid historyId, StatusUpdate status)
+            /// <summary>
+            /// This method Handle Draw Line
+            /// </summary>
+            public PixelQuery HandleDrawLine(PixelQuery pixelQuery,  Guid historyId, StatusUpdate status)
+            {
+                 // locals
+                int alpha = 0;
+                List<PixelInformation> pixels = this.Pixels;
+                
+                // if there are one or more criteria items
+                if (ListHelper.HasOneOrMoreItems(pixelQuery.Criteria))
+                {
+                    // get the first criteria
+                    PixelCriteria criteria = pixelQuery.Criteria[0];
+
+                    // initial value
+                    Color? colorToUse = null;
+
+                    // if draw line
+                    if (pixelQuery.ActionType == ActionTypeEnum.DrawLine)
+                    {
+                        // set the color
+                        colorToUse = pixelQuery.Color;
+                    }
+
+                    // Create a graphics object
+                    Graphics graphics = Graphics.FromImage(this.DirectBitmap.Bitmap);
+
+                    // if we are drawing a single line
+                    if (criteria.RepeatType == RepeatTypeEnum.NoRepeat)
+                    {
+                        // Draw the line
+                        DrawLine(criteria, alpha, this.DirectBitmap.Bitmap, historyId, status, graphics, true, colorToUse);
+                    }
+                    else
+                    {
+                        // Draw repeating lines
+                        DrawRepeatingLines(criteria, alpha, this.DirectBitmap.Bitmap, historyId, status, graphics, colorToUse);
+                    }
+
+                    // load again
+                    PixelDatabase pixelDatabase = PixelDatabaseLoader.LoadPixelDatabase(this.DirectBitmap.Bitmap, status);
+
+                    // If the pixelDatabase object exists
+                    if (NullHelper.Exists(pixelDatabase))
+                    {
+                        // Replace out the Pixels and DirectBitmap
+                        this.Pixels = pixelDatabase.Pixels;
+                        this.DirectBitmap = pixelDatabase.DirectBitmap;
+                    }
+                }
+
+                // return value
+                return pixelQuery;
+            }
+            #endregion
+            
             #region HandleGreenPixels(List<PixelInformation> pixels, PixelCriteria criteria)
             /// <summary>
             /// This method returns a list of pixels that match the criteria given

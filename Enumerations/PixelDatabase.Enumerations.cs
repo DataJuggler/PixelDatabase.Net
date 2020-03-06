@@ -12,10 +12,11 @@ namespace DataJuggler.PixelDatabase.Net.Enumerations
         HidePixels = 1,
         ShowPixels = 2,
         DrawLine = 3,
-        SetBackColor = 4,
-        Update = 5,
-        HideFrom = 6,
-        Undo = 7
+        DrawTransparentLine = 4,
+        SetBackColor = 5,
+        Update = 6,
+        HideFrom = 7,
+        Undo = 8
     }
     #endregion
 
