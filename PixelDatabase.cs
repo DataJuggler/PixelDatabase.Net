@@ -520,6 +520,17 @@ namespace DataJuggler.PixelDatabase.Net
                             }
                         }
                     }
+
+                    // load again
+                    PixelDatabase pixelDatabase = PixelDatabaseLoader.LoadPixelDatabase(this.DirectBitmap.Bitmap, status);
+
+                    // If the pixelDatabase object exists
+                    if (NullHelper.Exists(pixelDatabase))
+                    {
+                        // Replace out the Pixels and DirectBitmap
+                        this.Pixels = pixelDatabase.Pixels;
+                        this.DirectBitmap = pixelDatabase.DirectBitmap;
+                    }
                 }
 
                 // return value
@@ -1061,17 +1072,6 @@ namespace DataJuggler.PixelDatabase.Net
                     {
                         // Draw repeating lines
                         DrawRepeatingLines(criteria, alpha, this.DirectBitmap.Bitmap, historyId, status, graphics, colorToUse);
-                    }
-
-                    // load again
-                    PixelDatabase pixelDatabase = PixelDatabaseLoader.LoadPixelDatabase(this.DirectBitmap.Bitmap, status);
-
-                    // If the pixelDatabase object exists
-                    if (NullHelper.Exists(pixelDatabase))
-                    {
-                        // Replace out the Pixels and DirectBitmap
-                        this.Pixels = pixelDatabase.Pixels;
-                        this.DirectBitmap = pixelDatabase.DirectBitmap;
                     }
                 }
 
@@ -1656,7 +1656,7 @@ namespace DataJuggler.PixelDatabase.Net
                         case SwapTypeEnum.BlueToGreen:
 
                             // create the new color
-                            color = Color.FromArgb(previousColor.R, previousColor.B, previousColor.G);
+                            color = Color.FromArgb(previousColor.A, previousColor.R, previousColor.B, previousColor.G);
 
                             // required
                             break;
@@ -1664,7 +1664,7 @@ namespace DataJuggler.PixelDatabase.Net
                         case SwapTypeEnum.RedToBlue:
 
                             // create the new color
-                            color = Color.FromArgb(previousColor.B, previousColor.G, previousColor.R);
+                            color = Color.FromArgb(previousColor.A, previousColor.B, previousColor.G, previousColor.R);
 
                             // required
                             break;
@@ -1672,7 +1672,7 @@ namespace DataJuggler.PixelDatabase.Net
                         case SwapTypeEnum.RedToGreen:
 
                             // create the new color
-                            color = Color.FromArgb(previousColor.G, previousColor.R, previousColor.B);
+                            color = Color.FromArgb(previousColor.A, previousColor.G, previousColor.R, previousColor.B);
 
                             // required
                             break;

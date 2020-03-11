@@ -12,6 +12,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Pixel Database converts a Bitmap to a PixelInfomration object, that lets use LINQ or BQL (Bitmap Query Language)</description>
     <releaseNotes>
+    1.0.5 - I fixed a bug with Swap coiors where the previous Alpha was not being brought in.
+
     1.0.4 - I made a few changes under the hood, and a new feature where you can draw a line in color now by adding an optional color after the line thickness.
 
     Draw Line 1 Red
