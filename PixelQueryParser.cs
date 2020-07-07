@@ -202,15 +202,76 @@ namespace DataJuggler.PixelDatabase.Net
                             // Set the PixelType
                             pixelCriteria.PixelType = PixelTypeEnum.X;
                         }
-                        if ((text.StartsWith("y ")) || (text.Contains(" y ")))
+                        else if ((text.StartsWith("y ")) || (text.Contains(" y ")))
                         {
                             // Set the PixelType
                             pixelCriteria.PixelType = PixelTypeEnum.Y;
+                        }
+                        else if (text.Contains("bluegreendifference"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.BlueGreenDifference;
+                        }
+                        else if (text.Contains("bluemindifference"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.BlueMinDifference;
+                        }
+                        else if (text.Contains("bluemaxdifference"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.BlueMaxDifference;
+                        }
+                        else if (text.Contains("blueaveragedifference"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.BlueAverageDifference;
+                        }
+                        else if (text.Contains("greenaveragedifference"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.GreenAverageDifference;
+                        }
+                        else if (text.Contains("greenmindifference"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.GreenMinDifference;
+                        }
+                        else if (text.Contains("greenmaxdifference"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.GreenMaxDifference;
+                        }
+                        else if (text.Contains("redaveragedifference"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.RedAverageDifference;
+                        }
+                        else if (text.Contains("redmindifference"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.RedMinDifference;
+                        }
+                        else if (text.Contains("redmaxdifference"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.RedMaxDifference;
+                        }
+                        else if (text.Contains("blueaveragedifference"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.BlueAverageDifference;
                         }
                         else if (text.Contains("bluegreen"))
                         {
                             // Set the PixelType
                             pixelCriteria.PixelType = PixelTypeEnum.BlueGreen;
+                        }
+                        // if this text contains bluered
+                        else if (text.Contains("bluereddifference"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.BlueRedDifference;
                         }
                         // if this text contains bluered
                         else if (text.Contains("bluered"))
@@ -219,10 +280,36 @@ namespace DataJuggler.PixelDatabase.Net
                             pixelCriteria.PixelType = PixelTypeEnum.BlueRed;
                         }
                         // if this text contains greenred
+                        else if (text.Contains("greenreddifference"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.GreenRedDifference;
+                        }
+                        // if this text contains greenred
                         else if (text.Contains("greenred"))
                         {
                             // Set the PixelType
                             pixelCriteria.PixelType = PixelTypeEnum.GreenRed;
+                        }
+                        else if (text.Contains("minmaxdifference"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.MinMaxDifference;
+                        }
+                        else if (text.Contains("min"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.Min;
+                        }
+                        else if (text.Contains("max"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.Max;
+                        }
+                        else if (text.Contains("average"))
+                        {
+                            // Set the PixelType
+                            pixelCriteria.PixelType = PixelTypeEnum.Average;
                         }
                         else if (text.Contains("red"))
                         {
@@ -677,6 +764,17 @@ namespace DataJuggler.PixelDatabase.Net
                 // If the queryText string exists
                 if (TextHelper.Exists(queryText))
                 {
+                    // if the NewLine is not found
+                    if (!queryText.Contains(Environment.NewLine))
+                    {
+                        // The parsing on lines isn't working, this is a good hack till
+                        // I rewrite the parser to be more robust someday
+                        queryText = queryText.Replace("\n", Environment.NewLine);
+                    }
+
+                    // just in case, fix for the hack
+                    queryText = queryText.Replace("\r\r", "\r");
+
                     // get the lowercase version of the text
                     queryText = queryText.ToLower().Trim();
 
@@ -1135,6 +1233,9 @@ namespace DataJuggler.PixelDatabase.Net
                                 // verify everything is valid
                                 if ((pixelQuery.Red >= 0) && (pixelQuery.Green >= 0) && (pixelQuery.Red >= 0) && (pixelQuery.Alpha >= 0))
                                 {
+                                    // SetColor is true
+                                    pixelQuery.SetColor = true;
+
                                     // Set the Color
                                     pixelQuery.Color = Color.FromArgb(pixelQuery.Alpha, pixelQuery.Red, pixelQuery.Green, pixelQuery.Blue);
                                 }

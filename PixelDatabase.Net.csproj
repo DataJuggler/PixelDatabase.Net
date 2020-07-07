@@ -49,6 +49,8 @@
     <Compile Include="Directions.cs" />
     <Compile Include="Enumerations\PixelDatabase.Enumerations.cs" />
     <Compile Include="History.cs" />
+    <Compile Include="IndexRange.cs" />
+    <Compile Include="LastUpdate.cs" />
     <Compile Include="Layer.cs" />
     <Compile Include="Mask.cs" />
     <Compile Include="PixelCriteria.cs" />
@@ -60,10 +62,10 @@
     <Compile Include="DirectBitmap.cs" />
     <Compile Include="MaskManager.cs" />
     <Compile Include="PixelQueryParser.cs" />
+    <Compile Include="QueryRange.cs" />
     <Compile Include="StatusCallback.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data Juggler.ico" />
     <Content Include="Erason Icon.ico" />
   </ItemGroup>
   <ItemGroup>

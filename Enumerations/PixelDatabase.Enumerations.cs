@@ -34,7 +34,7 @@ namespace DataJuggler.PixelDatabase.Net.Enumerations
         Equals = 3,
         In = 4
     }
-    #endregion
+    #endregion    
 
     #region MaskActionEnum
     /// <summary>
@@ -58,18 +58,34 @@ namespace DataJuggler.PixelDatabase.Net.Enumerations
     public enum PixelTypeEnum : int
     {
         Unknown = 0,
-        Red = 1,
-        Green = 2,
+        Alpha = 1,
+        Average = 2,
         Blue = 3,
-        Total = 4,
+        BlueAverageDifference = 4,
         BlueGreen = 5,
-        BlueRed = 6,
-        GreenRed = 7,
-        X = 8,
-        Y = 9,
-        DrawLine = 10,
-        LastUpdate = 11,
-        Alpha = 12
+        BlueGreenDifference = 6,
+        BlueMaxDifference = 7,
+        BlueMinDifference = 8,
+        BlueRed = 9,
+        BlueRedDifference = 10,
+        DrawLine = 11,
+        Green = 12,
+        GreenAverageDifference = 13,
+        GreenMaxDifference = 14,
+        GreenMinDifference = 15,
+        GreenRed = 16,
+        GreenRedDifference = 17,
+        LastUpdate = 18,
+        Min = 19,
+        Max = 20,
+        MinMaxDifference = 21,
+        Red = 22,
+        RedAverageDifference = 23,
+        RedMaxDifference = 24,
+        RedMinDifference = 25,
+        Total = 26,
+        X = 27,
+        Y = 28
     }
     #endregion
 

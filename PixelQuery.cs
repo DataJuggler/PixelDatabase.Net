@@ -40,6 +40,7 @@ namespace DataJuggler.PixelDatabase.Net
         private RGBColor colorToAdjust;
         private RGBColor assignToColor;
         private string queryText;
+        private int pixelsUpdated;
         #endregion
 
         #region Constructor
@@ -51,6 +52,124 @@ namespace DataJuggler.PixelDatabase.Net
             // Create a new instance of a 'Directions' object.
             this.Directions = new Directions();
         }
+        #endregion
+
+        #region Methods
+
+            #region FindXCriteria()
+            /// <summary>
+            /// This method returns the X Criteria, if any.
+            /// </summary>
+            public PixelCriteria FindXCriteria()
+            {
+                // initial value
+                PixelCriteria criteria = null;
+
+                // local
+                int index = -1;
+
+                // if the value for HasCriteria is true
+                if (HasCriteria)
+                {
+                    // Iterate the collection of PixelCriteria objects
+                    foreach (PixelCriteria pixelCriteria in Criteria)
+                    {
+                        // Increment the value for index
+                        index++;
+
+                        // if this Criteria.PixelType equals X
+                        if (pixelCriteria.PixelType == PixelTypeEnum.X)
+                        {
+                            // set the return value
+                            criteria = pixelCriteria;
+
+                            // Set the Index
+                            criteria.Index = index;
+
+                            // break out of the loop
+                            break;
+                        }
+                    }
+                }
+                
+                // return value
+                return criteria;
+            }
+            #endregion
+
+            #region FindYCriteria()
+            /// <summary>
+            /// This method returns the Y Criteria, if any.
+            /// </summary>
+            public PixelCriteria FindYCriteria()
+            {
+                // initial value
+                PixelCriteria criteria = null;
+
+                // local
+                int index = -1;
+
+                // if the value for HasCriteria is true
+                if (HasCriteria)
+                {
+                    // Iterate the collection of PiYelCriteria objects
+                    foreach (PixelCriteria pixelCriteria in Criteria)
+                    {
+                        // Increment the value for index
+                        index++;
+
+                        // if this Criteria.PiYelType equals Y
+                        if (pixelCriteria.PixelType == PixelTypeEnum.Y)
+                        {
+                            // set the return value
+                            criteria = pixelCriteria;
+
+                            // Set the index
+                            criteria.Index = index;
+
+                            // break out of the loop
+                            break;
+                        }
+                    }
+                }
+                
+                // return value
+                return criteria;
+            }
+            #endregion
+            
+            #region RemoveCriteria(int index)
+            /// <summary>
+            /// This method Remove Criteria
+            /// </summary>
+            public void RemoveCriteria(int index)
+            {
+                // if the index exists and is in range
+                if ((index >= 0) && (index < Criteria.Count))
+                {
+                    // Remove this criteria
+                    Criteria.RemoveAt(index); 
+
+                    // if there are one or more criteria range items left
+                    if (ListHelper.HasOneOrMoreItems(Criteria))
+                    {
+                        // reset
+                        index = -1;
+
+                        // iterate the Criteria
+                        foreach (PixelCriteria tempCriteria in Criteria)
+                        {
+                            // Increment the value for index
+                            index++;
+
+                            // Set the new index
+                            tempCriteria.Index = index;
+                        }
+                    }
+                }
+            }
+            #endregion
+            
         #endregion
 
         #region Properties
@@ -160,6 +279,42 @@ namespace DataJuggler.PixelDatabase.Net
                 set { colorToAdjust = value; }
             }
             #endregion
+
+            #region ContainsLastUpdateCriteria
+            /// <summary>
+            /// This read only returns true if this PixelQuery contains a Criteria involving LastUpdate
+            /// </summary>
+            /// <returns></returns>
+            public bool ContainsLastUpdateCriteria
+            {
+                get
+                {
+                    // initial value
+                    bool containsLastUpdate = false;
+
+                    // if the value for HasCriteria is true
+                    if (HasCriteria)
+                    {
+                        // Iterate the collection of PixelCriteria objects
+                        foreach (PixelCriteria criteria in Criteria)
+                        {
+                            // if this Critieria.PixelType equals LastUpdate
+                            if (criteria.PixelType == PixelTypeEnum.LastUpdate)
+                            {
+                                // set the return value to true
+                                containsLastUpdate = true;
+
+                                // break out of the loop
+                                break;
+                            }
+                        }
+                    }
+
+                    // return value
+                    return containsLastUpdate;
+                }
+            }
+            #endregion
             
             #region Criteria
             /// <summary>
@@ -262,6 +417,23 @@ namespace DataJuggler.PixelDatabase.Net
             }
             #endregion
             
+            #region HasPixelsUpdated
+            /// <summary>
+            /// This property returns true if this object has a 'PixelsUpdated'.
+            /// </summary>
+            public bool HasPixelsUpdated
+            {
+                get
+                {
+                    // initial value
+                    bool hasPixelsUpdated = (this.PixelsUpdated != null);
+                    
+                    // return value
+                    return hasPixelsUpdated;
+                }
+            }
+            #endregion
+            
             #region IsValid
             /// <summary>
             /// This read only property returns the value for 'IsValid'.
@@ -281,8 +453,8 @@ namespace DataJuggler.PixelDatabase.Net
 
                         // Set the Properties on the criteria
                         pixelCriteria.ComparisonType = ComparisonTypeEnum.GreaterThan;
-                        pixelCriteria.PixelType = PixelTypeEnum.Total;
-                        pixelCriteria.TargetValue = 0;
+                        pixelCriteria.PixelType = PixelTypeEnum.Alpha;
+                        pixelCriteria.MinValue = 1;
 
                         // Create Default Criteria
                         Criteria = new List<PixelCriteria>();
@@ -330,6 +502,17 @@ namespace DataJuggler.PixelDatabase.Net
             {
                 get { return mask; }
                 set { mask = value; }
+            }
+            #endregion
+            
+            #region PixelsUpdated
+            /// <summary>
+            /// This property gets or sets the value for 'PixelsUpdated'.
+            /// </summary>
+            public int PixelsUpdated
+            {
+                get { return pixelsUpdated; }
+                set { pixelsUpdated = value; }
             }
             #endregion
             

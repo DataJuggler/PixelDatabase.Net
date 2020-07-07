@@ -12,18 +12,80 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Pixel Database converts a Bitmap to a PixelInfomration object, that lets use LINQ or BQL (Bitmap Query Language)</description>
     <releaseNotes>
-    1.0.5 - I fixed a bug with Swap coiors where the previous Alpha was not being brought in.
+      1.1.4: I had to update DataJuggler.UltimateHelper.Core.IsNumeric method to support negative numbers.
 
-    1.0.4 - I made a few changes under the hood, and a new feature where you can draw a line in color now by adding an optional color after the line thickness.
+1.1.3: I removed Absolute value from BlueRedDifference, BlueGreenDifference and GreenRedDifference.
+After working with these values for a few weeks, I discovered there is a difference between blue - red and red - blue, sometimes. 
 
-    Draw Line 1 Red
+1.1.2: I fixed a bug that has been bugging me for days. Now you apcan ply a color:
+Update
+Set Color 98 125 86
 
-    I also added a status callback, so I can get a little feedback while the Draw Line is operating. For the draw line in color, it is exrtemely fast compared to the draw
-    transparent line has to find the pixels updated, and it is very slow. With the delegate I saw why, one query I ran had 600,000 pixels to udpate, and it completed
-    about 1,000 every 20 seconds. One day I want to learn how to utilize a GPU to speed this up since I own a 1080 TI; not the fastest now, but is still faster
-    than most GPU's.
-    
-    1.0.0 - First .Net Framework version, because .Net Standard 2.1 doesn't work with .Net Framework.</releaseNotes>
+I had forgot to set the property SetColor to true.
+
+1.1.1: I have been working with PixelDatabase.Net website, so quite a few chagnes needed to be checked in.
+
+1.1.0: I discovered in my initial testing that the old way was using 7 gigs of memory to hold a list of 
+millions of PixelInformation objects. Now I do the BQL comparisons without instantiating tons of objects and
+the memory foot print went down to under 300 meg for a Blazor website with a 20 meg image loaded.
+
+1.0.7: I am publishing the version that is going to be on my website https://pixeldatabase.net.
+
+This version includes many new properties on a PixelInformation object, such as:
+1. Min
+2. Max
+3. Average
+4. MinMaxDifference
+5. RedMinDifference
+6. RedMaxDifference
+7. RedAverageDifference
+8. GreenMinDifference
+9. GreenMaxDifference
+10. GreenAverageDifference
+11. BlueMinDifference
+12. BlueMaxDifference
+13. BlueAverageDifference
+
+These should all work for queries such as:
+
+Hide Pixels Where
+MinMaxDifference > 25
+
+Or
+
+Update
+Set Swap Blue Red
+Where
+RedMinDifference < 10
+
+
+
+
+
+1.0.6: I have been working on this project for several weeks, and I need to update Nuget.
+
+1.0.5: I fixed a bug where Swap Colors was not taking the Alpha into account from the previous color.
+
+1.0.4: I made some changes while working on the .Net Framework version, and I am trying to keep them in sync. The changes involved I added a new draw line in color feature, a new feature for LastUpdate can always be queried by:
+
+Update
+blah blah blah
+Where
+Pixels In LastUpdate
+
+Also some changes to the Draw Line, which is still very slow, but now a message shows.
+I need to create an abort for Draw Line, just haven't had a chance yet. I will work on this some more next week.
+
+1.0.3: I added a new override to PixelDatabaseLoder for ImageUrl.
+
+
+1.0.2: I had forgot to list the Project Url, as well as the description changed from untested, to lightly tested.
+
+  -- not relevant here
+1.0.1: Changed TargetFramework netcoreapp3.1 to TargetFrameworks netstandard2.1;netcoreapp3.1
+
+First release, i will update the rest of the info if it gets past proof of concept.
+    </releaseNotes>
     <copyright>Copyright 2020</copyright>
     <tags>C#,Bitmap,Pixels,Jpegs,Pngs,Images,Imaging,Image Editing</tags>
     <dependencies>
