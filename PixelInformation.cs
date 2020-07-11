@@ -2,12 +2,8 @@
 
 #region using statements
 
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 #endregion
 
@@ -27,6 +23,7 @@ namespace DataJuggler.PixelDatabase.Net
         private int x;
         private int y;
         private bool isMask;
+        private long score;
         #endregion
 
         #region Constructors
@@ -555,6 +552,17 @@ namespace DataJuggler.PixelDatabase.Net
                     // return value
                     return redMinDifference;
                 }
+            }
+            #endregion
+            
+            #region Score
+            /// <summary>
+            /// This property gets or sets the value for 'Score'.
+            /// </summary>
+            public long Score
+            {
+                get { return score; }
+                set { score = value; }
             }
             #endregion
             

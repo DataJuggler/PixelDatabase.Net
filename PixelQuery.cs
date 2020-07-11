@@ -3,9 +3,9 @@
 #region using statements
 
 using DataJuggler.Core.UltimateHelper;
+using DataJuggler.PixelDatabase.Net.Enumerations;
 using System.Collections.Generic;
 using System.Drawing;
-using DataJuggler.PixelDatabase.Net.Enumerations;
 
 #endregion
 
@@ -426,7 +426,7 @@ namespace DataJuggler.PixelDatabase.Net
                 get
                 {
                     // initial value
-                    bool hasPixelsUpdated = (this.PixelsUpdated != null);
+                    bool hasPixelsUpdated = (this.PixelsUpdated > 0);
                     
                     // return value
                     return hasPixelsUpdated;

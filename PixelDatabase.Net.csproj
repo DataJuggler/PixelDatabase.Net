@@ -63,6 +63,7 @@
     <Compile Include="MaskManager.cs" />
     <Compile Include="PixelQueryParser.cs" />
     <Compile Include="QueryRange.cs" />
+    <Compile Include="SearchResult.cs" />
     <Compile Include="StatusCallback.cs" />
   </ItemGroup>
   <ItemGroup>

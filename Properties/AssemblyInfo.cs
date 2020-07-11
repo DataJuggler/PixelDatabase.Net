@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("DataJuggler.PixelDatabase.Net")]
 [assembly: AssemblyDescription("PixelDatabase is a List of PixelInformation objects, that you can use LINQ expressions or Bitmap Query Language expressions to update images.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Data Juggler -")]
+[assembly: AssemblyCompany("Data Juggler - I'm just a programmer. My dog's the company.")]
 [assembly: AssemblyProduct("PixelDatabase")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.4.0")]
-[assembly: AssemblyFileVersion("1.1.4.0")]
+[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]

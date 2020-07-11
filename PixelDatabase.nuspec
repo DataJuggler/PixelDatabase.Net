@@ -12,51 +12,69 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Pixel Database converts a Bitmap to a PixelInfomration object, that lets use LINQ or BQL (Bitmap Query Language)</description>
     <releaseNotes>
+      1.2.0: I added a couple of new features and fixed some bugs with the callback delegates if they were null.
+      New methods:
+      CreateSubImage - The PixelDatabase must be loaded, pass in the TopLeft point and the rectange size.
+      SearchForSubImage - This method returns a SearchResult object with the TopLeft point.
+      class SearchResult - This class contains a Point and a Score. It has a confidence property, but I haven't coded it yet.
+
+      Here is a sample project you can use that takes a screen shot and you click the canvas (PictureBox)
+      containing the image to create sub images.
+      There is also a Search Mode that demonstrates searching for an image in another image.
+     
+      https://github.com/DataJuggler/SubImageCreator
+
+      Code is new, so use at your own risk. I have a sample project on GitHub to test this that takes a screen
+      shot and you can click the picture of the screenshot to create sub images. All more of a test than anything
+      useful yet, but I might expand it over time.
+      
+      1.1.6: Added a new method CreateSubImage. Tested and it works, but not tested very thoroughly
+      1.1.5: I added a new method ApplyPixel so I can call this from a Paint.Net plug-in
       1.1.4: I had to update DataJuggler.UltimateHelper.Core.IsNumeric method to support negative numbers.
 
-1.1.3: I removed Absolute value from BlueRedDifference, BlueGreenDifference and GreenRedDifference.
-After working with these values for a few weeks, I discovered there is a difference between blue - red and red - blue, sometimes. 
+      1.1.3: I removed Absolute value from BlueRedDifference, BlueGreenDifference and GreenRedDifference.
+      After working with these values for a few weeks, I discovered there is a difference between blue - red and red - blue, sometimes.
 
-1.1.2: I fixed a bug that has been bugging me for days. Now you apcan ply a color:
-Update
-Set Color 98 125 86
+      1.1.2: I fixed a bug that has been bugging me for days. Now you apcan ply a color:
+      Update
+      Set Color 98 125 86
 
-I had forgot to set the property SetColor to true.
+      I had forgot to set the property SetColor to true.
 
-1.1.1: I have been working with PixelDatabase.Net website, so quite a few chagnes needed to be checked in.
+      1.1.1: I have been working with PixelDatabase.Net website, so quite a few chagnes needed to be checked in.
 
-1.1.0: I discovered in my initial testing that the old way was using 7 gigs of memory to hold a list of 
-millions of PixelInformation objects. Now I do the BQL comparisons without instantiating tons of objects and
-the memory foot print went down to under 300 meg for a Blazor website with a 20 meg image loaded.
+      1.1.0: I discovered in my initial testing that the old way was using 7 gigs of memory to hold a list of
+      millions of PixelInformation objects. Now I do the BQL comparisons without instantiating tons of objects and
+      the memory foot print went down to under 300 meg for a Blazor website with a 20 meg image loaded.
 
-1.0.7: I am publishing the version that is going to be on my website https://pixeldatabase.net.
+      1.0.7: I am publishing the version that is going to be on my website https://pixeldatabase.net.
 
-This version includes many new properties on a PixelInformation object, such as:
-1. Min
-2. Max
-3. Average
-4. MinMaxDifference
-5. RedMinDifference
-6. RedMaxDifference
-7. RedAverageDifference
-8. GreenMinDifference
-9. GreenMaxDifference
-10. GreenAverageDifference
-11. BlueMinDifference
-12. BlueMaxDifference
-13. BlueAverageDifference
+      This version includes many new properties on a PixelInformation object, such as:
+      1. Min
+      2. Max
+      3. Average
+      4. MinMaxDifference
+      5. RedMinDifference
+      6. RedMaxDifference
+      7. RedAverageDifference
+      8. GreenMinDifference
+      9. GreenMaxDifference
+      10. GreenAverageDifference
+      11. BlueMinDifference
+      12. BlueMaxDifference
+      13. BlueAverageDifference
 
-These should all work for queries such as:
+      These should all work for queries such as:
 
-Hide Pixels Where
-MinMaxDifference > 25
+      Hide Pixels Where
+      MinMaxDifference > 25
 
-Or
+      Or
 
-Update
-Set Swap Blue Red
-Where
-RedMinDifference < 10
+      Update
+      Set Swap Blue Red
+      Where
+      RedMinDifference < 10
 
 
 
