@@ -12,6 +12,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Pixel Database converts a Bitmap to a PixelInfomration object, that lets use LINQ or BQL (Bitmap Query Language)</description>
     <releaseNotes>
+      1.2.2: Refactored the way PixelQueryParser works, and added new features for Normalize and Scatter.      
       1.2.0: I added a couple of new features and fixed some bugs with the callback delegates if they were null.
       New methods:
       CreateSubImage - The PixelDatabase must be loaded, pass in the TopLeft point and the rectange size.

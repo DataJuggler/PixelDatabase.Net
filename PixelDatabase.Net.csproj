@@ -34,6 +34,9 @@
     <ApplicationIcon>Erason Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DataJuggler.Core.RandomShuffler, Version=1.2.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\DataJuggler.Core.RandomShuffler.1.2.6\lib\net461\DataJuggler.Core.RandomShuffler.dll</HintPath>
+    </Reference>
     <Reference Include="DataJuggler.Core.UltimateHelper, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\DataJuggler.Core.UltimateHelper.1.5.0\lib\net461\DataJuggler.Core.UltimateHelper.dll</HintPath>
     </Reference>
@@ -53,6 +56,7 @@
     <Compile Include="LastUpdate.cs" />
     <Compile Include="Layer.cs" />
     <Compile Include="Mask.cs" />
+    <Compile Include="NormalizeSettings.cs" />
     <Compile Include="PixelCriteria.cs" />
     <Compile Include="PixelDatabase.cs" />
     <Compile Include="PixelDatabaseLoader.cs" />
@@ -63,10 +67,12 @@
     <Compile Include="MaskManager.cs" />
     <Compile Include="PixelQueryParser.cs" />
     <Compile Include="QueryRange.cs" />
+    <Compile Include="ScatterSettings.cs" />
     <Compile Include="SearchResult.cs" />
     <Compile Include="StatusCallback.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data Juggler.ico" />
     <Content Include="Erason Icon.ico" />
   </ItemGroup>
   <ItemGroup>
